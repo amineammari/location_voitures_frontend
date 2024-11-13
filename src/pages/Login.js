@@ -1,20 +1,30 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { login } from "../services/api";
 import { motion } from "framer-motion";
 import { FaUserAlt, FaLock } from "react-icons/fa";
-import carImage from "../assets/car-background.jpg"; // High-end car image background
-import Particles from "react-tsparticles"; // For subtle background particles
+import carImage from "../assets/car-background.jpg";
+import Particles from "react-tsparticles";
 
 const Login = ({ setAuthToken, switchToSignup }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic validation
+    if (!username || !password) {
+      setError("Please enter both username and password.");
+      return;
+    }
+
     try {
       const data = await login(username, password);
-      setAuthToken(data.token);
+      setAuthToken(data.token); // Set token in parent component (App)
+      navigate("/app"); // Redirect to /app (or any other route) on successful login
     } catch (error) {
       setError("Failed to login. Check your credentials.");
     }
@@ -53,7 +63,7 @@ const Login = ({ setAuthToken, switchToSignup }) => {
         <h2 className="text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500 mb-6">
           Exotic Car Rental
         </h2>
-        
+
         {error && (
           <motion.p
             initial={{ opacity: 0 }}
